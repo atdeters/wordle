@@ -1,9 +1,15 @@
 // use std::collections::HashSet;
+use std::collections::HashSet;
 
 fn main() {
-    // Create a buffer to store our inputs
-    let mut buffer: [[char; 5]; 6] = [['_'; 5]; 6];
+	// Get binary and store the contents from the text file into a string
+	let	words: &'static str = include_str!("wordlists/words.txt");
 
+	// Split into words and collect them into a HashSet.
+	let dict: HashSet<&str> = words.lines().collect();
+	
+    let mut buffer: [[char; 5]; 6] = [['_'; 5]; 6];
+	println!("{:?}", dict);
     // TODO: Get word of the day
     // let mut _wordlist: HashSet<String> = HashSet::new();
 
