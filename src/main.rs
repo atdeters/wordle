@@ -12,9 +12,43 @@ enum CharStatus {
     WrongPos = 1,
     RightPos = 2
 }
+use rand::{Rng, rng};
 
+<<<<<<< HEAD
 fn print_gamestate(buffer: [[(char, CharStatus); 5]; 6]) -> ()
 {
+=======
+fn main() {
+	// Get binary and store the contents from the text file into a string
+	let	words: &'static str = include_str!("wordlists/words.txt");
+
+	// Split into words and collect them into a HashSet.
+	let dict: HashSet<&str> = words.lines().collect();
+
+    let mut buffer: [[(char, CharStatus); 5]; 6] = [[('_', CharStatus::NotInWord); 5]; 6];
+
+    // TODO: Get word of the day aka replace "harsh" with random word of dict
+	// let mut rng =  
+	let index = rng().random_range(0..dict.len());
+    let word_to_find: &str = dict
+								.iter()
+								.nth(index)
+								.unwrap();
+	println!("{word_to_find}");
+    // Create a counter for each char in the word_to_find
+    let mut char_counter_wtf: [u8; 26] = [0; 26];
+    for char in word_to_find.chars() {
+        char_counter_wtf[char as usize - 'a' as usize] += 1;
+    }
+
+    let mut char_nb: usize;
+    let mut term = Term::stdout(); // Terminal used to read input from user
+    let _ = execute!(term, cursor::Hide);
+    for i in 0..6 {
+
+    // TODO: Make an abstaction for this
+    // Print the whole buffer in the right color
+>>>>>>> refs/remotes/origin/main
     print!("\x1B[2J\x1B[H");
     for line in buffer {
         for tup in line {
