@@ -46,9 +46,18 @@ fn print_gamestate(buffer: [[(char, CharStatus); 5]; 6]) -> ()
 fn main() {
 	// Get binary and store the contents from the text file into a string
 	let	words: &'static str = include_str!("wordlists/words.txt");
+	let tmp_dict: HashSet<&str> = words.lines().collect();
+    let mut dict: HashSet<&str> = Default::default();
+    for word in &tmp_dict {
+        if word.len() == 5 {
+            dict.insert(word);
+        }
+    }
+    if dict.len() == 0 {
+        eprintln!("Empty wordlist. Exiting game!");
+        std::process::exit(1);
+    }
 
-	// Split into words and collect them into a HashSet.
-	let dict: HashSet<&str> = words.lines().collect();
 
     let mut buffer: [[(char, CharStatus); 5]; 6] = [[('_', CharStatus::NotInWord); 5]; 6];
 
@@ -134,29 +143,15 @@ fn main() {
         for char_tup in buffer[i].iter_mut() {
             // Character in right position
             if word_to_find.chars().nth(char_nb) == Some(char_tup.0) {
-                print!("{}", char_tup.0
-                                .to_string()
-                                .bold()
-                                .black()
-                                .on_truecolor(128, 239, 128));
                 char_counter_curr[char_tup.0 as usize - 'a' as usize] -= 1;
                 char_tup.1 = CharStatus::RightPos;
                 correct_chars += 1;
             }
             // Character in word but wrong position
             else if char_counter_curr[char_tup.0 as usize - 'a' as usize] != 0 {
-                print!("{}", char_tup.0
-                                .to_string()
-                                .bold()
-                                .black()
-                                .on_truecolor(255, 206, 27));
                 char_counter_curr[char_tup.0 as usize - 'a' as usize] -= 1;
                 char_tup.1 = CharStatus::WrongPos;
             }
-            else {
-                print!("{}", char_tup.0);
-            }
-            print!(" ");
             char_nb += 1;
         }
         if correct_chars == 5 {
