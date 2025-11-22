@@ -2,7 +2,7 @@ use std::collections::HashSet;
 use colored::Colorize;
 use console::Term;
 use crossterm::{cursor, execute};
-use rand::{Rng, rng};
+use ::rand::{Rng, rng};
 
 #[derive(PartialEq)]
 #[derive(Clone)]
@@ -47,10 +47,10 @@ fn main() {
 	// Get binary and store the contents from the text file into a string
 	let words: &'static str = include_str!("wordlists/words.txt");
 	let tmp_dict: HashSet<&str> = words.lines().collect();
-    let mut dict: HashSet<&str> = Default::default();
+    let mut dict: HashSet<String> = Default::default();
     for word in &tmp_dict {
-        if word.len() == 5 {
-            dict.insert(word);
+        if word.len() == 5 && word.chars().all(char::is_alphanumeric) {
+            dict.insert(word.to_string().to_lowercase());
         }
     }
     if dict.len() == 0 {
@@ -73,7 +73,6 @@ fn main() {
         char_counter_wtf[char as usize - 'a' as usize] += 1;
     }
 
-    let mut char_nb: usize;
     let mut term = Term::stdout(); // Terminal used to read input from user
     let _ = execute!(term, cursor::Hide);
     for i in 0..6 {
@@ -137,23 +136,40 @@ fn main() {
         }
 
         // Reveal information about latest word
-        char_nb = 0;
         let mut char_counter_curr = char_counter_wtf;
         let mut correct_chars: u8 = 0;
+
+        /*
+        * We do this in 2 different loops so that if correct characters
+        * in the wrong position followed by ones in the right one do not
+        * become colored incorrectly
+        */
+        let mut char_nb: usize;
+        char_nb = 0;
+        // Character in right position
         for char_tup in buffer[i].iter_mut() {
-            // Character in right position
             if word_to_find.chars().nth(char_nb) == Some(char_tup.0) {
-                char_counter_curr[char_tup.0 as usize - 'a' as usize] -= 1;
+                if char_counter_curr[char_tup.0 as usize - 'a' as usize] > 0 {
+                    char_counter_curr[char_tup.0 as usize - 'a' as usize] -= 1;
+                }
                 char_tup.1 = CharStatus::RightPos;
                 correct_chars += 1;
             }
-            // Character in word but wrong position
-            else if char_counter_curr[char_tup.0 as usize - 'a' as usize] != 0 {
-                char_counter_curr[char_tup.0 as usize - 'a' as usize] -= 1;
+            char_nb += 1;
+        }
+
+        // Character in word but wrong position
+        char_nb = 0;
+        for char_tup in buffer[i].iter_mut() {
+            if char_counter_curr[char_tup.0 as usize - 'a' as usize] != 0 {
+                if char_counter_curr[char_tup.0 as usize - 'a' as usize] > 0 {
+                    char_counter_curr[char_tup.0 as usize - 'a' as usize] -= 1;
+                }
                 char_tup.1 = CharStatus::WrongPos;
             }
             char_nb += 1;
         }
+
         if correct_chars == 5 {
             print_gamestate(buffer);
             println!("Won game");
