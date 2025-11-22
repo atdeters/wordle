@@ -13,31 +13,8 @@ enum CharStatus {
     RightPos = 2
 }
 
-fn main() {
-	// Get binary and store the contents from the text file into a string
-	let	words: &'static str = include_str!("wordlists/words.txt");
-
-	// Split into words and collect them into a HashSet.
-	let dict: HashSet<&str> = words.lines().collect();
-
-    let mut buffer: [[(char, CharStatus); 5]; 6] = [[('_', CharStatus::NotInWord); 5]; 6];
-
-    // TODO: Get word of the day aka replace "harsh" with random word of dict
-    let word_to_find: &str = "harsh";
-
-    // Create a counter for each char in the word_to_find
-    let mut char_counter_wtf: [u8; 26] = [0; 26];
-    for char in word_to_find.chars() {
-        char_counter_wtf[char as usize - 'a' as usize] += 1;
-    }
-
-    let mut char_nb: usize;
-    let mut term = Term::stdout(); // Terminal used to read input from user
-    let _ = execute!(term, cursor::Hide);
-    for i in 0..6 {
-
-    // TODO: Make an abstaction for this
-    // Print the whole buffer in the right color
+fn print_gamestate(buffer: [[(char, CharStatus); 5]; 6]) -> ()
+{
     print!("\x1B[2J\x1B[H");
     for line in buffer {
         for tup in line {
@@ -63,9 +40,31 @@ fn main() {
         }
         println!("");
     }
+}
 
+fn main() {
+	// Get binary and store the contents from the text file into a string
+	let	words: &'static str = include_str!("wordlists/words.txt");
 
+	// Split into words and collect them into a HashSet.
+	let dict: HashSet<&str> = words.lines().collect();
 
+    let mut buffer: [[(char, CharStatus); 5]; 6] = [[('_', CharStatus::NotInWord); 5]; 6];
+
+    // TODO: Get word of the day aka replace "harsh" with random word of dict
+    let word_to_find: &str = "harsh";
+
+    // Create a counter for each char in the word_to_find
+    let mut char_counter_wtf: [u8; 26] = [0; 26];
+    for char in word_to_find.chars() {
+        char_counter_wtf[char as usize - 'a' as usize] += 1;
+    }
+
+    let mut char_nb: usize;
+    let mut term = Term::stdout(); // Terminal used to read input from user
+    let _ = execute!(term, cursor::Hide);
+    for i in 0..6 {
+        print_gamestate(buffer);
         // Let user build the word in the buffer
         let mut idx: usize = 0;
         let mut key_in: console::Key;
@@ -101,34 +100,7 @@ fn main() {
                     buffer[i][idx].0 = char_in;
                     idx += 1;
                 }
-
-
-                // Print the whole buffer in the right color
-                print!("\x1B[2J\x1B[H");
-                for line in buffer {
-                    for tup in line {
-                        match tup.1 {
-                            CharStatus::RightPos => {
-                                print!("{}", tup.0
-                                                .to_string()
-                                                .bold()
-                                                .black()
-                                                .on_truecolor(128, 239, 128));
-                            }
-                            CharStatus::WrongPos => {
-                                print!("{}", tup.0
-                                                .to_string()
-                                                .bold()
-                                                .black()
-                                                .on_truecolor(255, 206, 27));
-                            }
-                            _ => {
-                                print!("{}", tup.0);
-                            }
-                        }
-                    }
-                    println!("");
-                }
+                print_gamestate(buffer);
             }
 
             // Create a string out of our current buffer
@@ -184,10 +156,12 @@ fn main() {
             char_nb += 1;
         }
         if correct_chars == 5 {
+            print_gamestate(buffer);
             println!("Won game");
             std::process::exit(0);
         }
         println!("");
     }
+    print_gamestate(buffer);
     println!("You lose. The word was \"{}\"", word_to_find);
 }
