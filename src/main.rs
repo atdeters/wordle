@@ -30,7 +30,7 @@ fn main() {
         let mut char_in: char = '_';
         loop {
             while char_in != '\n' {
-                // TODO: Turn everything into uppercase
+                // TODO: Turn everything into lowercase
                 key_in = term
                             .read_key()
                             .expect("Reason"); // TODO: Read what this is all about
@@ -55,8 +55,7 @@ fn main() {
                     idx -= 1;
                     buffer[i][idx] = '_';
                 }
-                // TODO: Make sure only english alphabet is allowed!
-                else if idx <= 4 && char_in.is_alphabetic() {
+                else if idx <= 4 && char_in.is_ascii_alphabetic() {
                     buffer[i][idx] = char_in;
                     idx += 1;
                 }
