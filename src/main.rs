@@ -30,12 +30,11 @@ fn main() {
         let mut char_in: char = '_';
         loop {
             while char_in != '\n' {
-                // Get a key
+                // TODO: Turn everything into uppercase
                 key_in = term
                             .read_key()
                             .expect("Reason"); // TODO: Read what this is all about
                
-                
                 // Turn key into char
                 match key_in {
                     console::Key::Char(c) => {
@@ -52,20 +51,15 @@ fn main() {
                     }
                 }
 
-                // println!("Latest char input: {}", key_in);
                 if char_in == 127 as char && idx > 0 {
                     idx -= 1;
                     buffer[i][idx] = '_';
                 }
+                // TODO: Make sure only english alphabet is allowed!
                 else if idx <= 4 && char_in.is_alphabetic() {
                     buffer[i][idx] = char_in;
                     idx += 1;
                 }
-                /*
-                let tmp_word: String = elem.iter().collect();
-                let current_word: &str = tmp_word.as_str();
-                println!("{current_word}");
-                */
                 print!("\x1B[2J\x1B[H");
                 for line in buffer {
                     println!("{:?}", line);
