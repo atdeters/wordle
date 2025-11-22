@@ -6,3 +6,4 @@ edition = "2024"
 [dependencies]
 colored = "3.0.0"
 console = "0.16.1"
+crossterm = "0.29.0"

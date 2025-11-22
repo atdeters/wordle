@@ -1,6 +1,17 @@
 use std::collections::HashSet;
 use colored::Colorize;
 use console::Term;
+use crossterm::{cursor, execute};
+
+#[derive(PartialEq)]
+#[derive(Clone)]
+#[derive(Copy)]
+#[derive(Debug)]
+enum CharStatus {
+    NotInWord = 0,
+    WrongPos = 1,
+    RightPos = 2
+}
 
 fn main() {
 	// Get binary and store the contents from the text file into a string
@@ -9,7 +20,7 @@ fn main() {
 	// Split into words and collect them into a HashSet.
 	let dict: HashSet<&str> = words.lines().collect();
 
-    let mut buffer: [[char; 5]; 6] = [['_'; 5]; 6];
+    let mut buffer: [[(char, CharStatus); 5]; 6] = [[('_', CharStatus::NotInWord); 5]; 6];
 
     // TODO: Get word of the day aka replace "harsh" with random word of dict
     let word_to_find: &str = "harsh";
@@ -21,8 +32,39 @@ fn main() {
     }
 
     let mut char_nb: usize;
-    let term = Term::stdout(); // Terminal used to read input from user
+    let mut term = Term::stdout(); // Terminal used to read input from user
+    let _ = execute!(term, cursor::Hide);
     for i in 0..6 {
+
+    // TODO: Make an abstaction for this
+    // Print the whole buffer in the right color
+    print!("\x1B[2J\x1B[H");
+    for line in buffer {
+        for tup in line {
+            match tup.1 {
+                CharStatus::RightPos => {
+                    print!("{}", tup.0
+                                    .to_string()
+                                    .bold()
+                                    .black()
+                                    .on_truecolor(128, 239, 128));
+                }
+                CharStatus::WrongPos => {
+                    print!("{}", tup.0
+                                    .to_string()
+                                    .bold()
+                                    .black()
+                                    .on_truecolor(255, 206, 27));
+                }
+                _ => {
+                    print!("{}", tup.0);
+                }
+            }
+        }
+        println!("");
+    }
+
+
 
         // Let user build the word in the buffer
         let mut idx: usize = 0;
@@ -33,7 +75,7 @@ fn main() {
                 key_in = term
                             .read_key()
                             .expect("Reason"); // TODO: Read what this is all about
-               
+
                 // Turn key into char
                 match key_in {
                     console::Key::Char(c) => {
@@ -53,20 +95,48 @@ fn main() {
 
                 if char_in == 127 as char && idx > 0 {
                     idx -= 1;
-                    buffer[i][idx] = '_';
+                    buffer[i][idx].0 = '_';
                 }
                 else if idx <= 4 && char_in.is_ascii_alphabetic() {
-                    buffer[i][idx] = char_in;
+                    buffer[i][idx].0 = char_in;
                     idx += 1;
                 }
+
+
+                // Print the whole buffer in the right color
                 print!("\x1B[2J\x1B[H");
                 for line in buffer {
-                    println!("{:?}", line);
+                    for tup in line {
+                        match tup.1 {
+                            CharStatus::RightPos => {
+                                print!("{}", tup.0
+                                                .to_string()
+                                                .bold()
+                                                .black()
+                                                .on_truecolor(128, 239, 128));
+                            }
+                            CharStatus::WrongPos => {
+                                print!("{}", tup.0
+                                                .to_string()
+                                                .bold()
+                                                .black()
+                                                .on_truecolor(255, 206, 27));
+                            }
+                            _ => {
+                                print!("{}", tup.0);
+                            }
+                        }
+                    }
+                    println!("");
                 }
             }
 
             // Create a string out of our current buffer
-            let tmp_word: String = buffer[i].iter().collect();
+            let mut tmp_word: String = String::from(""); // = buffer[i].iter().collect();
+
+            for char_tup in buffer[i] {
+                tmp_word.push_str(&char_tup.0.to_string());
+            }
             let current_word: &str = tmp_word.as_str();
 
             if idx != 5 {
@@ -85,28 +155,30 @@ fn main() {
         char_nb = 0;
         let mut char_counter_curr = char_counter_wtf;
         let mut correct_chars: u8 = 0;
-        for character in buffer[i] {
+        for char_tup in buffer[i].iter_mut() {
             // Character in right position
-            if word_to_find.chars().nth(char_nb) == Some(character) {
-                print!("{}", character
+            if word_to_find.chars().nth(char_nb) == Some(char_tup.0) {
+                print!("{}", char_tup.0
                                 .to_string()
                                 .bold()
                                 .black()
                                 .on_truecolor(128, 239, 128));
-                char_counter_curr[character as usize - 'a' as usize] -= 1;
+                char_counter_curr[char_tup.0 as usize - 'a' as usize] -= 1;
+                char_tup.1 = CharStatus::RightPos;
                 correct_chars += 1;
             }
             // Character in word but wrong position
-            else if char_counter_curr[character as usize - 'a' as usize] != 0 {
-                print!("{}", character
+            else if char_counter_curr[char_tup.0 as usize - 'a' as usize] != 0 {
+                print!("{}", char_tup.0
                                 .to_string()
                                 .bold()
                                 .black()
                                 .on_truecolor(255, 206, 27));
-                char_counter_curr[character as usize - 'a' as usize] -= 1;
+                char_counter_curr[char_tup.0 as usize - 'a' as usize] -= 1;
+                char_tup.1 = CharStatus::WrongPos;
             }
             else {
-                print!("{character}");
+                print!("{}", char_tup.0);
             }
             print!(" ");
             char_nb += 1;
