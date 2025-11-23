@@ -2,6 +2,10 @@ use std::collections::HashSet;
 use macroquad::prelude::*;
 use macroquad::rand::rand;
 use macroquad::rand::srand;
+use macroquad::audio;
+use macroquad::audio::Sound;
+use macroquad::audio::play_sound_once;
+
 
 #[derive(PartialEq)]
 #[derive(Clone)]
@@ -84,10 +88,26 @@ fn print_gamestate_win(t_buffer: [[(char, CharStatus); 5]; 6], t_text: &str) -> 
 
 const CHEATS_ON: bool = true;
 
+fn play_click(sfx_arr: &[Sound; 5]) -> () {
+    let idx: usize = (rand() % 5) as usize;
+    play_sound_once(&sfx_arr[idx]);
+}
+
+
 // TODO: Try to add a proper font
 
 #[macroquad::main("ft_wordle")]
 async fn main() {
+
+
+    // Load sfx
+    let sfx_clicks: [Sound; 5] = [  audio::load_sound("assets/sfx/click/click_sfx_01.wav").await.unwrap(),
+                                    audio::load_sound("assets/sfx/click/click_sfx_02.wav").await.unwrap(),
+                                    audio::load_sound("assets/sfx/click/click_sfx_03.wav").await.unwrap(),
+                                    audio::load_sound("assets/sfx/click/click_sfx_04.wav").await.unwrap(),
+                                    audio::load_sound("assets/sfx/click/click_sfx_05.wav").await.unwrap(),
+    ];
+
 
     let mut game_over: bool = false;
 
@@ -136,10 +156,11 @@ async fn main() {
                 if c.is_ascii_alphabetic() && buff_idx_x < 5 {
                     println!("Log: {c} pressed");
                     if !game_over {
-                    c.make_ascii_lowercase();
-                    buffer[buff_idx_y][buff_idx_x].0 = c;
-                    buff_idx_x += 1;
-                    info_text = "".to_string();
+                        play_click(&sfx_clicks);
+                        c.make_ascii_lowercase();
+                        buffer[buff_idx_y][buff_idx_x].0 = c;
+                        buff_idx_x += 1;
+                        info_text = "".to_string();
                     }
                 }
             }
@@ -149,6 +170,7 @@ async fn main() {
         if is_key_pressed(KeyCode::Backspace) && buff_idx_x > 0 {
             println!("Log: Backspace pressed");
             if !game_over {
+                play_click(&sfx_clicks);
                 info_text = "".to_string();
                 buff_idx_x -= 1;
                 buffer[buff_idx_y][buff_idx_x].0 = '_';
@@ -159,10 +181,12 @@ async fn main() {
             println!("Log: Enter pressed");
             // Not big enough
             if buff_idx_x < 5 && !game_over {
+                play_click(&sfx_clicks);
                 info_text = "Not enough letters".to_string();
                 eprintln!("Not enough letters");
             }
             else if !game_over {
+                play_click(&sfx_clicks);
                 // Create a string out of our current buffer
                 let mut tmp_word: String = String::from("");
                 for char_tup in buffer[buff_idx_y] {

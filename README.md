@@ -1,6 +1,7 @@
 # 🦀 Wordle in Rust
 
-[![Rust](https://img.shields.io/badge/rust-stable-brightgreen)](https://www.rust-lang.org/) [![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue)](https://atdeters.github.io/wordle/)
+[![Rust](https://img.shields.io/badge/rust-stable-brightgreen)](https://www.rust-lang.org/) 
+[![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue)](https://atdeters.github.io/wordle/)
 
 Welcome to our implementation of the popular New York Times game [**Wordle**](https://www.nytimes.com/games/wordle/index.html) — now playable right in your browser!  
 
