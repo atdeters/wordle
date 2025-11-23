@@ -1,6 +1,6 @@
 use std::collections::HashSet;
-// use ::rand::{Rng, rng};
 use macroquad::prelude::*;
+use macroquad::rand::rand;
 
 #[derive(PartialEq)]
 #[derive(Clone)]
@@ -105,14 +105,11 @@ async fn main() {
     }
 
     // Chose random word of the day
-    // let index = rng().random_range(0..dict.len());
-    /*
+    let index = rand() % dict.len() as u32;
     let word_to_find: &str = dict
                                 .iter()
-                                .nth(index)
+                                .nth(index as usize)
                                 .unwrap();
-    */
-    let word_to_find: &str = "dekes";
 
     if CHEATS_ON == true {
         println!("{word_to_find}");
