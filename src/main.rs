@@ -171,7 +171,7 @@ async fn main() {
                 let current_word: &str = tmp_word.as_str();
 
                 if !dict.contains(current_word) {
-                    info_text = format!("Wort not in wordlist: {current_word}").to_string();
+                    info_text = format!("Word not in wordlist: {current_word}").to_string();
                     eprintln!("Word not in wordlist: {current_word}");
                 }
                 else if !game_over {
@@ -227,8 +227,8 @@ async fn main() {
                     buff_idx_x = 0;
                     if buff_idx_y == 6 {
                         game_over = true;
-                        info_text = format!("You lose! The word was {word_to_find}").to_string();
-                        println!("You lose. The word was {}", word_to_find);
+                        info_text = format!("You lost! The word was {word_to_find}").to_string();
+                        println!("You lost. The word was {}", word_to_find);
                     }
                 }
             }
