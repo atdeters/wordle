@@ -13,10 +13,10 @@ enum CharStatus {
     NotRevealed = 3
 }
 
-fn print_gamestate_win(buffer: [[(char, CharStatus); 5]; 6]) -> ()
+fn print_gamestate_win(t_buffer: [[(char, CharStatus); 5]; 6], t_text: &str) -> ()
 {
     // === COLORS ===
-    const COL_BACK: Color = Color::new(18.0 / 255.0, 18.0 / 255.0, 19.0 / 255.0, 1.00);
+    // const COL_BACK: Color = Color::new(18.0 / 255.0, 18.0 / 255.0, 19.0 / 255.0, 1.00);
     const COL_RIGHT_POS: Color = Color::new(83.0 / 255.0, 141.0 / 255.0, 78.0 / 255.0, 1.0);
     const COL_WRONG_POS: Color = Color::new(181.0 / 255.0, 160.0 / 255.0, 59.0 / 255.0, 1.0);
     // const COL_UNUSED = Color::new(129.0 / 255.0, 131.0 / 255.0, 132.0 / 255.0, 1.0);
@@ -28,14 +28,16 @@ fn print_gamestate_win(buffer: [[(char, CharStatus); 5]; 6]) -> ()
     const GRID_THICC: f32 = 4.0;
     const GRID_GAP: f32 = 5.0;
     const FONT_SIZE: u16 = 80;
+    const INFO_FONT_SIZE: u16 = 30;
+    const INFO_TEXT_GAP: f32 = 50.0;
 
-    clear_background(COL_BACK);
+    // clear_background(COL_BACK);
     // Draw complete grid
     for i in 0..6 {
         for j in -2isize..3 {
-            let mut curr_char: String = buffer[i][(j + 2) as usize].0.to_string();
+            let mut curr_char: String = t_buffer[i][(j + 2) as usize].0.to_string();
             curr_char.make_ascii_uppercase();
-            let status: CharStatus = buffer[i][(j+2) as usize].1;
+            let status: CharStatus = t_buffer[i][(j+2) as usize].1;
             // Case: empty (aka '_') || not yet revealed
             if curr_char == "_" || status == CharStatus::NotRevealed {
                 draw_rectangle_lines(screen_width() / 2.0 - BLOCK_SIZE / 2.0 + j as f32 * (BLOCK_SIZE + GRID_GAP),
@@ -97,6 +99,12 @@ fn print_gamestate_win(buffer: [[(char, CharStatus); 5]; 6]) -> ()
             }
         }
     }
+    let center = get_text_center(t_text, Option::None, INFO_FONT_SIZE, 1.0, 0.0);
+    draw_text(t_text,
+        screen_width() / 2.0 - center.x,
+        (GRID_OFFSET_Y + 6.0 * (BLOCK_SIZE + GRID_GAP)) + center.y + INFO_TEXT_GAP,
+                INFO_FONT_SIZE.into(),
+                WHITE);
 }
 
 const CHEATS_ON: bool = false;
@@ -139,18 +147,24 @@ async fn main() {
     let mut buffer: [[(char, CharStatus); 5]; 6] = [[('_', CharStatus::NotRevealed); 5]; 6];
     let mut buff_idx_y: usize = 0;
     let mut buff_idx_x: usize = 0;
+    let mut info_text: String = String::from("");
 
     // Main game loop
     loop {
 
+
+        // clear_background(BLACK);
         let curr = get_char_pressed();
         match curr {
             Some(mut c) => {
                 if c.is_ascii_alphabetic() && buff_idx_x < 5 {
+                    println!("Log: {c} pressed");
+                    if buff_idx_y < 6 {
                     c.make_ascii_lowercase();
                     buffer[buff_idx_y][buff_idx_x].0 = c;
                     buff_idx_x += 1;
-                    println!("Log: {c} pressed");
+                    info_text = "".to_string();
+                    }
                 }
             }
             None => {}
@@ -158,17 +172,21 @@ async fn main() {
 
         if is_key_pressed(KeyCode::Backspace) && buff_idx_x > 0 {
             println!("Log: Backspace pressed");
-            buff_idx_x -= 1;
-            buffer[buff_idx_y][buff_idx_x].0 = '_';
+            if buff_idx_y < 6 {
+                info_text = "".to_string();
+                buff_idx_x -= 1;
+                buffer[buff_idx_y][buff_idx_x].0 = '_';
+            }
         }
 
         if is_key_pressed(KeyCode::Enter) {
             println!("Log: Enter pressed");
             // Not big enough
-            if buff_idx_x < 5 {
-                eprintln!("Not enough letters"); // TODO: Print this on the screen
+            if buff_idx_x < 5 && buff_idx_y < 6 {
+                info_text = "Not enough letters".to_string();
+                eprintln!("Not enough letters");
             }
-            else {
+            else if buff_idx_y < 6 {
                 // Create a string out of our current buffer
                 let mut tmp_word: String = String::from("");
                 for char_tup in buffer[buff_idx_y] {
@@ -177,9 +195,10 @@ async fn main() {
                 let current_word: &str = tmp_word.as_str();
 
                 if !dict.contains(current_word) {
-                    eprintln!("Word not in wordlist: {current_word}"); // TODO: Print this on the screen
+                    info_text = format!("Wort not in wordlist: {current_word}").to_string();
+                    eprintln!("Word not in wordlist: {current_word}");
                 }
-                else {
+                else if buff_idx_y < 6 {
                     // Reveal information about latest word
                     let mut char_counter_curr = char_counter_wtf;
                     let mut correct_chars: u8 = 0;
@@ -219,24 +238,25 @@ async fn main() {
                     }
 
                     if correct_chars == 5 {
-                        println!("Won game"); // TODO: Put this on the screen
-                        std::process::exit(0); // TODO: Don't exit but show winning screen
+                        info_text = "Game won. Congratulations!".to_string();
+                        println!("Won game");
                     }
                     buff_idx_y += 1;
                     buff_idx_x = 0;
                     if buff_idx_y == 6 {
+                        info_text = format!("You lose! The word was {word_to_find}").to_string();
                         println!("You lose. The word was {}", word_to_find);
-                        std::process::exit(0); // TODO: Don't exit but show winning screen
                     }
                 }
             }
         }
 
         if is_key_pressed(KeyCode::Escape) {
+            println!("Log: Escape pressed");
             std::process::exit(0);
         }
 
-        print_gamestate_win(buffer);
+        print_gamestate_win(buffer, &info_text);
         next_frame().await;
     }
 
