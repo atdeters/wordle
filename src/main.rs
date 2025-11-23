@@ -114,6 +114,8 @@ const CHEATS_ON: bool = true;
 #[macroquad::main("ft_wordle")]
 async fn main() {
 
+    let mut game_over: bool = false;
+
     // Create dict from file + validations
 	let words: &'static str = include_str!("wordlists/words.txt");
 	let tmp_dict: HashSet<&str> = words.lines().collect();
@@ -159,7 +161,7 @@ async fn main() {
             Some(mut c) => {
                 if c.is_ascii_alphabetic() && buff_idx_x < 5 {
                     println!("Log: {c} pressed");
-                    if buff_idx_y < 6 {
+                    if !game_over {
                     c.make_ascii_lowercase();
                     buffer[buff_idx_y][buff_idx_x].0 = c;
                     buff_idx_x += 1;
@@ -172,7 +174,7 @@ async fn main() {
 
         if is_key_pressed(KeyCode::Backspace) && buff_idx_x > 0 {
             println!("Log: Backspace pressed");
-            if buff_idx_y < 6 {
+            if !game_over {
                 info_text = "".to_string();
                 buff_idx_x -= 1;
                 buffer[buff_idx_y][buff_idx_x].0 = '_';
@@ -182,11 +184,11 @@ async fn main() {
         if is_key_pressed(KeyCode::Enter) {
             println!("Log: Enter pressed");
             // Not big enough
-            if buff_idx_x < 5 && buff_idx_y < 6 {
+            if buff_idx_x < 5 && !game_over {
                 info_text = "Not enough letters".to_string();
                 eprintln!("Not enough letters");
             }
-            else if buff_idx_y < 6 {
+            else if !game_over {
                 // Create a string out of our current buffer
                 let mut tmp_word: String = String::from("");
                 for char_tup in buffer[buff_idx_y] {
@@ -198,7 +200,7 @@ async fn main() {
                     info_text = format!("Wort not in wordlist: {current_word}").to_string();
                     eprintln!("Word not in wordlist: {current_word}");
                 }
-                else if buff_idx_y < 6 {
+                else if !game_over {
                     // Reveal information about latest word
                     let mut char_counter_curr = char_counter_wtf;
                     let mut correct_chars: u8 = 0;
@@ -238,12 +240,15 @@ async fn main() {
                     }
 
                     if correct_chars == 5 {
+                        game_over = true;
                         info_text = "Game won. Congratulations!".to_string();
                         println!("Won game");
+
                     }
                     buff_idx_y += 1;
                     buff_idx_x = 0;
                     if buff_idx_y == 6 {
+                        game_over = true;
                         info_text = format!("You lose! The word was {word_to_find}").to_string();
                         println!("You lose. The word was {}", word_to_find);
                     }
