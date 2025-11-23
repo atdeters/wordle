@@ -218,9 +218,9 @@ async fn main() {
                             counter_idx = char_tup.0 as usize - 'a' as usize;
                             if char_counter_curr[counter_idx] > 0 {
                                 char_counter_curr[counter_idx] -= 1;
+                                char_tup.1 = CharStatus::RightPos;
+                                correct_chars += 1;
                             }
-                            char_tup.1 = CharStatus::RightPos;
-                            correct_chars += 1;
                         }
                         char_nb += 1;
                     }
