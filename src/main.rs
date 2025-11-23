@@ -144,8 +144,7 @@ fn main() {
         * in the wrong position followed by ones in the right one do not
         * become colored incorrectly
         */
-        let mut char_nb: usize;
-        char_nb = 0;
+        let mut char_nb: usize = 0;
         // Character in right position
         for char_tup in buffer[i].iter_mut() {
             if word_to_find.chars().nth(char_nb) == Some(char_tup.0) {
@@ -159,13 +158,11 @@ fn main() {
         }
 
         // Character in word but wrong position
-        char_nb = 0;
         for char_tup in buffer[i].iter_mut() {
             if char_counter_curr[char_tup.0 as usize - 'a' as usize] > 0 {
                 char_counter_curr[char_tup.0 as usize - 'a' as usize] -= 1;
                 char_tup.1 = CharStatus::WrongPos;
             }
-            char_nb += 1;
         }
 
         if correct_chars == 5 {
