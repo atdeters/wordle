@@ -66,8 +66,6 @@ fn main() {
                                 .iter()
                                 .nth(index)
                                 .unwrap();
-    word_to_find = "dekes";
-
 
     // Create a counter for each char in the word_to_find
     let mut char_counter_wtf: [u8; 26] = [0; 26];
@@ -164,7 +162,8 @@ fn main() {
         // Character in word but wrong position
         for char_tup in buffer[i].iter_mut() {
             counter_idx = char_tup.0 as usize - 'a' as usize;
-            if char_counter_curr[counter_idx] > 0 {
+            if char_counter_curr[counter_idx] > 0
+                && char_tup.1 != CharStatus::RightPos {
                 char_counter_curr[counter_idx] -= 1;
                 char_tup.1 = CharStatus::WrongPos;
             }
