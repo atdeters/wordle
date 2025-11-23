@@ -2,6 +2,10 @@ use std::collections::HashSet;
 use macroquad::prelude::*;
 use macroquad::rand::rand;
 use macroquad::rand::srand;
+use macroquad::audio;
+use macroquad::audio::Sound;
+use macroquad::audio::play_sound_once;
+
 
 #[derive(PartialEq)]
 #[derive(Clone)]
@@ -104,10 +108,26 @@ fn print_gamestate_win(
 
 const CHEATS_ON: bool = true;
 
+fn play_click(sfx_arr: &[Sound; 5]) -> () {
+    let idx: usize = (rand() % 5) as usize;
+    play_sound_once(&sfx_arr[idx]);
+}
+
+
 // TODO: Try to add a proper font
 
 #[macroquad::main("ft_wordle")]
 async fn main() {
+
+
+    // Load sfx
+    let sfx_clicks: [Sound; 5] = [  audio::load_sound("assets/sfx/click/click_sfx_01.wav").await.unwrap(),
+                                    audio::load_sound("assets/sfx/click/click_sfx_02.wav").await.unwrap(),
+                                    audio::load_sound("assets/sfx/click/click_sfx_03.wav").await.unwrap(),
+                                    audio::load_sound("assets/sfx/click/click_sfx_04.wav").await.unwrap(),
+                                    audio::load_sound("assets/sfx/click/click_sfx_05.wav").await.unwrap(),
+    ];
+
 
     let mut game_over: bool = false;
 
@@ -179,10 +199,12 @@ async fn main() {
             println!("Log: Enter pressed");
             // Not big enough
             if buff_idx_x < 5 && !game_over {
+                play_click(&sfx_clicks);
                 info_text = "Not enough letters".to_string();
                 eprintln!("Not enough letters");
             }
             else if !game_over {
+                play_click(&sfx_clicks);
                 // Create a string out of our current buffer
                 let mut tmp_word: String = String::from("");
                 for char_tup in buffer[buff_idx_y] {
@@ -191,7 +213,7 @@ async fn main() {
                 let current_word: &str = tmp_word.as_str();
 
                 if !dict.contains(current_word) {
-                    info_text = format!("Wort not in wordlist: {current_word}").to_string();
+                    info_text = format!("Word not in wordlist: {current_word}").to_string();
                     eprintln!("Word not in wordlist: {current_word}");
                 }
                 else if !game_over {
@@ -250,8 +272,8 @@ async fn main() {
                     buff_idx_x = 0;
                     if buff_idx_y == 6 {
                         game_over = true;
-                        info_text = format!("You lose! The word was {word_to_find}").to_string();
-                        println!("You lose. The word was {}", word_to_find);
+                        info_text = format!("You lost! The word was {word_to_find}").to_string();
+                        println!("You lost. The word was {}", word_to_find);
                     }
                 }
             }
