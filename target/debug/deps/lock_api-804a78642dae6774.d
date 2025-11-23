@@ -1,8 +1,0 @@
-/sgoinfre/adeters/ft_wordle/target/debug/deps/lock_api-804a78642dae6774.d: /home/adeters/sgoinfre/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/lock_api-0.4.14/src/lib.rs /home/adeters/sgoinfre/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/lock_api-0.4.14/src/mutex.rs /home/adeters/sgoinfre/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/lock_api-0.4.14/src/remutex.rs /home/adeters/sgoinfre/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/lock_api-0.4.14/src/rwlock.rs
-
-/sgoinfre/adeters/ft_wordle/target/debug/deps/liblock_api-804a78642dae6774.rmeta: /home/adeters/sgoinfre/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/lock_api-0.4.14/src/lib.rs /home/adeters/sgoinfre/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/lock_api-0.4.14/src/mutex.rs /home/adeters/sgoinfre/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/lock_api-0.4.14/src/remutex.rs /home/adeters/sgoinfre/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/lock_api-0.4.14/src/rwlock.rs
-
-/home/adeters/sgoinfre/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/lock_api-0.4.14/src/lib.rs:
-/home/adeters/sgoinfre/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/lock_api-0.4.14/src/mutex.rs:
-/home/adeters/sgoinfre/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/lock_api-0.4.14/src/remutex.rs:
-/home/adeters/sgoinfre/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/lock_api-0.4.14/src/rwlock.rs:
