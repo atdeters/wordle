@@ -239,6 +239,17 @@ async fn main() {
             info_text = "There is no escape!".to_string();
         }
 
+        for touch in touches() {
+            let (fill_color, size) = match touch.phase {
+                TouchPhase::Started => (GREEN, 80.0),
+                TouchPhase::Stationary => (WHITE, 60.0),
+                TouchPhase::Moved => (YELLOW, 60.0),
+                TouchPhase::Ended => (BLUE, 80.0),
+                TouchPhase::Cancelled => (BLACK, 80.0),
+            };
+            draw_circle(touch.position.x, touch.position.y, size, fill_color);
+        }
+
         print_gamestate_win(buffer, &info_text);
         next_frame().await;
     }
