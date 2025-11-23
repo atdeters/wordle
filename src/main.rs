@@ -178,10 +178,11 @@ async fn main() {
 			if c.is_ascii_alphabetic() && buff_idx_x < 5 {
 				println!("Log: {c} pressed");
 				if !game_over {
-				c.make_ascii_lowercase();
-				buffer[buff_idx_y][buff_idx_x].0 = c;
-				buff_idx_x += 1;
-				info_text.clear();
+                    play_click(&sfx_clicks);
+                    c.make_ascii_lowercase();
+                    buffer[buff_idx_y][buff_idx_x].0 = c;
+                    buff_idx_x += 1;
+                    info_text.clear();
 				}
 			}
 		}
@@ -189,6 +190,7 @@ async fn main() {
         if is_key_pressed(KeyCode::Backspace) && buff_idx_x > 0 {
             println!("Log: Backspace pressed");
             if !game_over {
+                play_click(&sfx_clicks);
                 info_text.clear();
                 buff_idx_x -= 1;
                 buffer[buff_idx_y][buff_idx_x].0 = '_';
