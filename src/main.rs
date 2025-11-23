@@ -128,6 +128,7 @@ async fn main() {
         audio::load_sound("assets/sfx/click/click_sfx_05.wav").await.unwrap(),
     ];
     let sfx_buzz: Sound = audio::load_sound("assets/sfx/notifications/sfx_fail.wav").await.unwrap();
+	let sfx_secret: Sound = audio::load_sound("assets/sfx/secret/quack.wav").await.unwrap();
 
     let mut game_over: bool = false;
 
@@ -296,6 +297,7 @@ async fn main() {
         }
 
         if is_key_pressed(KeyCode::Escape) && !game_over{
+			play_sound(&sfx_secret, PlaySoundParams { looped: false, volume: VOL_BUZZ});
             println!("Log: Escape pressed");
             info_text = "There is no escape!".to_string();
         }
