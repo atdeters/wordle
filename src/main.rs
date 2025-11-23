@@ -1,6 +1,7 @@
 use std::collections::HashSet;
 use macroquad::prelude::*;
 use macroquad::rand::rand;
+use macroquad::rand::srand;
 
 #[derive(PartialEq)]
 #[derive(Clone)]
@@ -105,6 +106,7 @@ async fn main() {
     }
 
     // Chose random word of the day
+    srand(macroquad::miniquad::date::now() as u64);
     let index = rand() % dict.len() as u32;
     let word_to_find: &str = dict
                                 .iter()
