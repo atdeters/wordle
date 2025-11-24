@@ -19,6 +19,9 @@ enum CharStatus {
     NotRevealed = 3
 }
 
+// === MESSAGES ==
+const INTRO_MSG: &str = "[Click to enter]";
+
 // === ANIMATIONS ===
 const DELAY: f64 = 0.2;
 
@@ -38,6 +41,7 @@ const GRID_GAP: f32 = 5.0;
 const FONT_SIZE: u16 = 80;
 const INFO_FONT_SIZE: u16 = 30;
 const INFO_TEXT_GAP: f32 = 50.0;
+const INTRO_MSG_SIZE: u16 = 25;
 
 // === AUDIO ===
 const MUTE: bool = false;
@@ -185,9 +189,27 @@ async fn main() {
     let mut in_animation: bool = false;
     let mut result_printed: bool = false;
 
+    let mut user_entered: bool = false;
+
     let mut played: u8 = 0;
     // Main game loop
     loop {
+
+        // Create a loading screen
+        if !user_entered {
+            clear_background(COL_BACK);
+            let center: Vec2 = get_text_center(INTRO_MSG, Option::None, INTRO_MSG_SIZE, 1.0, 0.0);
+            draw_text(INTRO_MSG, screen_width() / 2.0  - center.x, screen_height() / 2.0 - center.y, INTRO_MSG_SIZE.into(), WHITE);
+            if get_char_pressed().is_some()
+                || is_mouse_button_pressed(MouseButton::Left)
+                || is_mouse_button_pressed(MouseButton::Right)
+                || is_mouse_button_pressed(MouseButton::Middle)
+            {
+                user_entered = true;
+            }
+            next_frame().await;
+            continue;
+        }
 
         if let Some(mut c) = get_char_pressed() {
 			if c.is_ascii_alphabetic() && buff_idx_x < 5 && !in_animation {
@@ -338,7 +360,6 @@ async fn main() {
         }
 
         if is_key_pressed(KeyCode::Escape) {
-            get_char_pressed();
 			play_sound(&sfx_secret, PlaySoundParams { looped: false, volume: VOL_DUCK});
             println!("Log: Escape pressed");
             if !game_over {
