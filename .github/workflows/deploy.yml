@@ -30,7 +30,6 @@ jobs:
           mkdir -p ./deploy
           cp ./target/wasm32-unknown-unknown/release/wordle.wasm ./deploy/
           cp index.html ./deploy/
-          cp binding.js ./deploy/
           cp -r assets/ ./deploy/
 
       - name: Deploy
