@@ -22,7 +22,11 @@
 <body>
     <canvas id="glcanvas" tabindex='1'></canvas>
     <!-- Minified and statically hosted version of https://github.com/not-fl3/macroquad/blob/master/js/mq_js_bundle.js -->
-    <script src="https://not-fl3.github.io/miniquad-samples/mq_js_bundle.js"></script>
+    <!-- script src="https://not-fl3.github.io/miniquad-samples/mq_js_bundle.js"></script -->
+    <script src="binding.js"></script>
+    <input  id="hidden_input" 
+            style="opacity:0; position:absolute; left:-1000px; top:-1000px;" 
+            autocomplete="off">
     <script>load("wordle.wasm");</script> <!-- Your compiled WASM binary -->
 </body>
 </html>
