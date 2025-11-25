@@ -277,7 +277,7 @@ async fn main() {
                 // Create a string out of our current buffer
                 let mut tmp_word: String = String::from("");
                 for char_tup in buffer[buff_idx_y] {
-                    tmp_word.push_str(&char_tup.0.to_string());
+                    tmp_word.push(char_tup.0);
                 }
                 let current_word: &str = tmp_word.as_str();
 
