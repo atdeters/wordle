@@ -1381,6 +1381,23 @@ function() {
     }
 }()
 
+let input = document.getElementById("hidden_input");
+
+input.addEventListener("input", (e) => {
+    let value = input.value;
+    if (value.length > 0) {
+        // Der letzte eingegebene Charakter
+        let ch = value[value.length - 1];
+
+        // Weiterleiten als KeyboardEvent
+        window.dispatchEvent(new KeyboardEvent("keydown", {key: ch}));
+        window.dispatchEvent(new KeyboardEvent("keyup", {key: ch}));
+
+        // Input wieder leeren, damit "input" wieder feuert
+        input.value = "";
+    }
+});
+
 document.getElementById("canvas").addEventListener("touchstart", () => {
     input.focus();
 });
