@@ -3,6 +3,7 @@
 [![Rust](https://img.shields.io/badge/Rust-%23000000.svg?e&logo=rust&logoColor=white)](https://rust-lang.org/)
 [![WebAssembly](https://img.shields.io/badge/WebAssembly-654FF0?logo=webassembly&logoColor=fff)](https://webassembly.org/)
 [![HTML](https://img.shields.io/badge/HTML-%23E34F26.svg?logo=html5&logoColor=white)](https://en.wikipedia.org/wiki/HTML)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/bbf5fc36-369f-4434-9e78-af0cafc7da37/deploy-status)](https://app.netlify.com/projects/42wordle/deploys)
 
 Welcome to our implementation of the popular New York Times game [**Wordle**](https://www.nytimes.com/games/wordle/index.html) — now playable right in your browser!  
 
