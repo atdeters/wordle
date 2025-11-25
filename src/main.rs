@@ -243,17 +243,16 @@ async fn main() {
             continue;
         }
 
-        if let Some(mut c) = get_char_pressed() {
-			if c.is_ascii_alphabetic() && buff_idx_x < 5 && !in_animation {
-				println!("Log: {c} pressed");
-				if !game_over {
-                    play_click(&sfx_clicks, PlaySoundParams { looped: false, volume: vol_click });
-                    c.make_ascii_lowercase();
-                    buffer[buff_idx_y][buff_idx_x].0 = c;
-                    buff_idx_x += 1;
-                    info_text.clear();
-				}
-			}
+        if let Some(mut c) = get_char_pressed() && c.is_ascii_alphabetic()
+                && buff_idx_x < 5 && !in_animation {
+            println!("Log: {c} pressed");
+            if !game_over {
+                play_click(&sfx_clicks, PlaySoundParams { looped: false, volume: vol_click });
+                c.make_ascii_lowercase();
+                buffer[buff_idx_y][buff_idx_x].0 = c;
+                buff_idx_x += 1;
+                info_text.clear();
+            }
 		}
 
         if is_key_pressed(KeyCode::Backspace) && buff_idx_x > 0 && !in_animation {
